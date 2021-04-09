@@ -6,14 +6,14 @@
 
 	<groupId>net.imyeyu.betterjava</groupId>
 	<artifactId>BetterJava</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>15</maven.compiler.source>
 		<maven.compiler.target>15</maven.compiler.target>
-		<fx.version>15</fx.version>
+		<fx.version>15.0.1</fx.version>
 	</properties>
 
 	<dependencies>
