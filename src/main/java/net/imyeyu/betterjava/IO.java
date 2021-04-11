@@ -1,5 +1,6 @@
 package net.imyeyu.betterjava;
 
+import javax.naming.NoPermissionException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,18 +45,19 @@ public final class IO {
 		boolean isSuccessed = false;
 		try {
 			if (!file.exists()) {
-				if (file.createNewFile()) {
-					FileOutputStream fos = new FileOutputStream(file);
-					OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-					BufferedWriter bw = new BufferedWriter(osw);
-					bw.write(data);
-					bw.flush();
-					bw.close();
-					osw.close();
-					fos.close();
-					isSuccessed = true;
+				if (!file.createNewFile()) {
+					throw new NoPermissionException("无法创建文件：" + file.getAbsolutePath() + File.separator + file.getName());
 				}
 			}
+			FileOutputStream fos = new FileOutputStream(file);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+			BufferedWriter bw = new BufferedWriter(osw);
+			bw.write(data);
+			bw.flush();
+			bw.close();
+			osw.close();
+			fos.close();
+			isSuccessed = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

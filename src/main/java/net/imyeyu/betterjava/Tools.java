@@ -191,7 +191,7 @@ public final class Tools {
 	 * <br>支持 B, KB, MB, GB, TB
 	 * <br>示例：
 	 * <pre>
-	 *     Tools.storageFormat(102411, 2); // 返回 100.01 KB
+	 *     Tools.byteFormat(102411, 2); // 返回 100.01 KB
 	 * </pre>
 	 *
 	 * @param size    字节大小
@@ -199,7 +199,7 @@ public final class Tools {
 	 * @return 格式化结果
 	 */
 	public static String byteFormat(double size, int decimal) {
-		final String[] unit = {" B ", " KB", " MB", " GB", " TB"};
+		final String[] unit = {" B", " KB", " MB", " GB", " TB"};
 		if (0 < size) {
 			String format;
 			for (int i = 0; i < unit.length; i++, size /= 1024) {
