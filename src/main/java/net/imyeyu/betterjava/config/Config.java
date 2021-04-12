@@ -65,13 +65,15 @@ public class Config {
 			Method method = Tools.getDeclaredMethod(control, "selectedProperty");
 			if (method != null) {
 				method.setAccessible(true);
-				BooleanProperty property = (BooleanProperty) method.invoke(control);
-				property.set(is(key));
-				property.addListener((obs, o, v) -> configCache.put(key, v));
+				bindSelectedProperty((BooleanProperty) method.invoke(control), key);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public void bindSelectedProperty(BooleanProperty property, String key) {
+		property.set(is(key));
+		property.addListener((obs, o, v) -> configCache.put(key, v));
 	}
 	// --
 	@SuppressWarnings("unchecked")
