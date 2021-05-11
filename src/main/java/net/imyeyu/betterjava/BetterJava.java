@@ -26,15 +26,18 @@ public final class BetterJava {
 		}
 		return null;
 	}
-	
+
+	/** @return 当前日期（yyyy-MM-dd） */
 	public static String date() {
 		return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 	}
-	
+
+	/** @return 当前时间（HH:mm:ss） */
 	public static String time() {
 		return new SimpleDateFormat("HH:mm:ss").format(new Date());
 	}
-	
+
+	/** @return 当前日期时间（yyyy-MM-dd HH:mm:ss） */
 	public static String datetime() {
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 	}
