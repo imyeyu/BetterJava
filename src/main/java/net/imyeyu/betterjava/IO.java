@@ -5,11 +5,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -64,15 +66,28 @@ public final class IO {
 		return isSuccessed;
 	}
 
+
+	/**
+	 * 以 UTF-8 编码读取数据流为字符串
+	 *
+	 * @param is 输入流
+	 * @return 字符串
+	 */
+	public static String toString(InputStream is) {
+		return toString(is, StandardCharsets.UTF_8);
+	}
+
 	/**
 	 * 读取数据流为字符串
 	 *
-	 * @param isr 输入流
-	 * @return 字符串内容
+	 * @param is      输入流
+	 * @param charset 编码格式
+	 * @return 字符串
 	 */
-	public static String toString(InputStreamReader isr) {
+	public static String toString(InputStream is, Charset charset) {
 		StringBuilder sb = new StringBuilder();
 		try {
+			InputStreamReader isr = new InputStreamReader(is, charset);
 			BufferedReader br = new BufferedReader(isr);
 			String input;
 			while ((input = br.readLine()) != null) {
@@ -80,6 +95,7 @@ public final class IO {
 			}
 			br.close();
 			isr.close();
+			is.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -101,7 +117,7 @@ public final class IO {
 		String result = "";
 		try {
 			FileInputStream fis = new FileInputStream(file);
-			result = toString(new InputStreamReader(fis, charset));
+			result = toString(fis);
 			fis.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,23 +136,28 @@ public final class IO {
 	}
 
 	/**
+	 * 读取 jar 内文件为数据流
+	 *
+	 * @param path 文件路径（文件路径，不需要 / 开始）
+	 * @return 数据流
+	 * @throws FileNotFoundException 找不到文件
+	 */
+	public static InputStream jarFileToInputStream(String path) throws FileNotFoundException {
+		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+		if (is != null) {
+			return is;
+		}
+		throw new FileNotFoundException("找不到该文件：" + path);
+	}
+
+	/**
 	 * 读取 Jar 内文件为字符串内容（UTF-8）
 	 *
-	 * @param path Jar 内文件路径
+	 * @param path Jar 内文件路径（无需 / 开始）
 	 * @return 字符串内容
 	 */
-	public static String jarFileToString(String path) {
-		String result = "";
-		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-			if (is != null) {
-				result = toString(new InputStreamReader(is, StandardCharsets.UTF_8));
-				is.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
+	public static String jarFileToString(String path) throws FileNotFoundException {
+		return toString(jarFileToInputStream(path));
 	}
 
 	/**

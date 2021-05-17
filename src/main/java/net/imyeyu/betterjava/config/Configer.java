@@ -4,6 +4,7 @@ import net.imyeyu.betterjava.IO;
 
 import javax.naming.ConfigurationException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,7 +96,7 @@ public class Configer {
 	 * @return 配置对象
 	 * @throws ConfigurationException 配置异常
 	 */
-	public Config get() throws ConfigurationException {
+	public Config get() throws ConfigurationException, FileNotFoundException {
 		Config configDEF = getDefault();
 		config = generateConfig(IO.toString(iniFile, "UTF-8"));
 		
@@ -114,7 +115,7 @@ public class Configer {
 	 * @return                        配置对象
 	 * @throws ConfigurationException 配置异常
 	 */
-	public Config getDefault() throws ConfigurationException {
+	public Config getDefault() throws ConfigurationException, FileNotFoundException {
 		return generateConfig(IO.jarFileToString(jarFile));
 	}
 	
@@ -129,7 +130,7 @@ public class Configer {
 			config = get();
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
-		} catch (NullPointerException e) {
+		} catch (FileNotFoundException e) {
 			throw new NullPointerException("找不到默认配置文件: " + jarFile);
 		}
 		return config;
