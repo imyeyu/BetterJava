@@ -317,4 +317,14 @@ public final class Encode {
 		if (url == null) return "";
 		return URLDecoder.decode(url, StandardCharsets.UTF_8);
 	}
+
+	/**
+	 * 检验字符串是否为 json 数据，不校验是否有错误
+	 *
+	 * @param s 字符串
+	 * @return true 为是 JSON 数据
+	 */
+	public static boolean isJson(String s) {
+		return (s.startsWith("{") && s.endsWith("}")) || (s.startsWith("[") && s.endsWith("]"));
+	}
 }
