@@ -99,15 +99,15 @@ public final class Network {
 	}
 
 	/**
-	 * 使用默认浏览器打开 URI 地址
+	 * 使用默认浏览器打开 URL 地址
 	 *
-	 * @param uri URI 地址
+	 * @param url 地址
 	 */
-	public static void openURIInBrowser(URI uri) {
+	public static void openURIInBrowser(String url) {
 		try {
 			Desktop dp = Desktop.getDesktop();
 			if (dp.isSupported(Desktop.Action.BROWSE)) {
-				dp.browse(uri);
+				dp.browse(URI.create(url));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
