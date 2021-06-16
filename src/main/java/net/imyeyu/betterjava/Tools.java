@@ -202,7 +202,7 @@ public final class Tools {
 		final String[] unit = {" B", " KB", " MB", " GB", " TB"};
 		if (0 < size) {
 			String format;
-			for (int i = 0; i < unit.length; i++, size /= 1024) {
+			for (int i = 0; i < unit.length; i++, size /= 1024d) {
 				format = String.format("%." + decimal + "f" + unit[i], size);
 				if (size <= 1000) {
 					return format;
