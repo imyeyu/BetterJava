@@ -165,27 +165,18 @@ public final class IO {
 	 *
 	 * @param jarPath  Jar 内文件
 	 * @param filePath 磁盘路径
-	 * @return 为 true 时复制成功
+	 * @throws IOException 执行异常
 	 */
-	public static boolean jarFileToDisk(String jarPath, String filePath) {
-		boolean isSuccessed = false;
-		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(jarPath);
-			if (is != null) {
-				FileOutputStream fos = new FileOutputStream(filePath);
-				byte[] input = new byte[128];
-				int l;
-				while ((l = is.read(input)) != -1) {
-					fos.write(input, 0, l);
-				}
-				fos.close();
-				is.close();
-				isSuccessed = true;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	public static void jarFileToDisk(String jarPath, String filePath) throws IOException {
+		InputStream is = jarFileToInputStream(jarPath);
+		FileOutputStream fos = new FileOutputStream(filePath);
+		byte[] input = new byte[4096];
+		int l;
+		while ((l = is.read(input)) != -1) {
+			fos.write(input, 0, l);
 		}
-		return isSuccessed;
+		fos.close();
+		is.close();
 	}
 
 	/**
@@ -205,5 +196,25 @@ public final class IO {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 计算文件或文件夹大小
+	 *
+	 * @param file 文件或文件夹
+	 * @return 总大小（字节）
+	 */
+	public static synchronized long calcSize(final File file) {
+		if (file.isFile()) {
+			return file.length();
+		}
+		final File[] list = file.listFiles();
+		long total = 0;
+		if (list != null) {
+			for (final File item : list) {
+				total += calcSize(item);
+			}
+		}
+		return total;
 	}
 }
