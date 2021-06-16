@@ -5,6 +5,7 @@ import net.imyeyu.betterjava.IO;
 import javax.naming.ConfigurationException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +30,13 @@ public class Configer {
 		this.jarFile = file;
 		String appName = file.substring(file.lastIndexOf(Character.toChars(47)[0]) + 1);
 		iniFile = new File(appName.endsWith(".ini") ? appName : appName + ".ini");
-		if (!iniFile.exists()) IO.jarFileToDisk(file, appName);
+		if (!iniFile.exists()) {
+			try {
+				IO.jarFileToDisk(file, appName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
@@ -128,10 +135,10 @@ public class Configer {
 		try {
 			IO.jarFileToDisk(jarFile, iniFile.getAbsolutePath());
 			config = get();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			throw new NullPointerException("找不到默认配置文件: " + jarFile);
+		} catch (ConfigurationException | IOException e) {
+			e.printStackTrace();
 		}
 		return config;
 	}
