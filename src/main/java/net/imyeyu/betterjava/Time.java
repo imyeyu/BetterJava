@@ -3,6 +3,8 @@ package net.imyeyu.betterjava;
 import net.imyeyu.betterjava.bean.DateTimeDifference;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Date;
 
 /**
@@ -10,11 +12,28 @@ import java.util.Date;
  *
  * 夜雨 创建于 2021-06-10 20:07
  */
-public class UnixTime {
+public class Time {
 
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	public static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-	public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	/** yy */
+	public static final SimpleDateFormat yearFormat      = new SimpleDateFormat("yy");
+	/** yyyy */
+	public static final SimpleDateFormat yearFormatFull  = new SimpleDateFormat("yyyy");
+	/** M */
+	public static final SimpleDateFormat monthFormat     = new SimpleDateFormat("M");
+	/** MM */
+	public static final SimpleDateFormat monthFormatFull = new SimpleDateFormat("MM");
+	/** d */
+	public static final SimpleDateFormat dayFormat       = new SimpleDateFormat("d");
+	/** dd */
+	public static final SimpleDateFormat dayFormatFull   = new SimpleDateFormat("dd");
+	/** yyyyMMdd */
+	public static final SimpleDateFormat ymdFormat       = new SimpleDateFormat("yyyyMMdd");
+	/** HH:mm:ss */
+	public static final SimpleDateFormat timeFormat      = new SimpleDateFormat("HH:mm:ss");
+	/** yyyy-MM-dd */
+	public static final SimpleDateFormat dateFormat      = new SimpleDateFormat("yyyy-MM-dd");
+	/** yyyy-MM-dd HH:mm:ss */
+	public static final SimpleDateFormat dateTimeFormat  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private static int f(double v) {
 		return (int) Math.floor(v);
@@ -81,5 +100,16 @@ public class UnixTime {
 	 */
 	public static String toDateTime(long unixTime) {
 		return dateTimeFormat.format(new Date(unixTime));
+	}
+
+	/**
+	 * 获取某月的最后一日
+	 *
+	 * @param y 年
+	 * @param m 月
+	 * @return 最后一日
+	 */
+	public static int getLastDayOfMonth(int y, int m) {
+		return LocalDate.of(y, m, 1).getMonth().length(Year.of(y).isLeap());
 	}
 }
