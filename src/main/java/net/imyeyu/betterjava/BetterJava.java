@@ -1,46 +1,42 @@
 package net.imyeyu.betterjava;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * BetterJava，由 YeyuUtils -> iUtils -> iTools -> BetterJava 迭代
  *
  * 夜雨 创建于 2021/2/13 11:39
  */
-public final class BetterJava {
+public interface BetterJava {
 
-	public static final String VERSION = "1.1.4";
-	
+	String BETTER_JAVA_VERSION = "1.1.6";
+
 	/**
-	 * 队列对象，输入若干对象，逐一遍历，返回第一个不为空的对象
-	 * 
-	 * @param <T> 对象类型
-	 * @param ts  对象数组
-	 * @return 第一个不为空的对象
+	 * 前补零（最终长度 2 字符）
+	 *
+	 * @param number 数值
+	 * @return 补零字符串
 	 */
-	@SafeVarargs
-	public static <T>T queue(T... ts) {
-		for (int i = 0; i < ts.length; i++) {
-			if (ts[i] != null) {
-				return ts[i];
-			}
-		}
-		return null;
+	default String zero(Number number) {
+		return zero(2, number);
 	}
 
-	/** @return 当前日期（yyyy-MM-dd） */
-	public static String date() {
-		return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+	/**
+	 * 前补零
+	 *
+	 * @param l      最终长度
+	 * @param number 数值
+	 * @return 补零字符串
+	 */
+	default String zero(int l, Number number) {
+		return String.format("%0" + l + "d", number);
 	}
 
-	/** @return 当前时间（HH:mm:ss） */
-	public static String time() {
-		return new SimpleDateFormat("HH:mm:ss").format(new Date());
-	}
-
-	/** @return 当前日期时间（yyyy-MM-dd HH:mm:ss） */
-	public static String datetime() {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+	/**
+	 * 向下取整返回整型
+	 *
+	 * @param v 数值
+	 * @return 取整结果
+	 */
+	static int floor(double v) {
+		return (int) Math.floor(v);
 	}
 }
