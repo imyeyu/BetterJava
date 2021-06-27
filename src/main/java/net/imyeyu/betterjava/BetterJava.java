@@ -1,5 +1,7 @@
 package net.imyeyu.betterjava;
 
+import java.io.File;
+
 /**
  * BetterJava，由 YeyuUtils -> iUtils -> iTools -> BetterJava 迭代
  *
@@ -7,7 +9,11 @@ package net.imyeyu.betterjava;
  */
 public interface BetterJava {
 
-	String BETTER_JAVA_VERSION = "1.1.6";
+	/** BetterJava 版本 */
+	String VERSION = "1.1.6";
+
+	/** 文件系统路径分隔符 File.separator */
+	String SEP = File.separator;
 
 	/**
 	 * 前补零（最终长度 2 字符）
