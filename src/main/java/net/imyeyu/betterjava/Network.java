@@ -1,12 +1,12 @@
 package net.imyeyu.betterjava;
 
+import javax.naming.NoPermissionException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.awt.Desktop;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  *
  * 夜雨 创建于 2021/2/13 09:55
  */
-public final class Network {
+public final class Network implements BetterJava {
 
 	/**
 	 * 发送 GET 请求
@@ -158,36 +158,31 @@ public final class Network {
 	 * @param url      网络文件地址
 	 * @param path     下载到..文件夹
 	 * @param fileName 下载后的文件命名
-	 * @return 为 true 时成功下载完成
 	 * @throws Exception 下载异常
 	 */
-	public static boolean downloadFile(String url, String path, String fileName) throws Exception {
-		boolean isSuccessed = false;
-
+	public static void downloadFile(String url, String path, String fileName) throws Exception {
 		File dir = new File(path);
 		if (!dir.exists()) {
-			if (dir.mkdirs()) {
-				HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-				conn.setConnectTimeout(8000);
-				conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
-				InputStream is = conn.getInputStream();
-				byte[] buffer = new byte[1024];
-				int l;
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				while ((l = is.read(buffer)) != -1) {
-					bos.write(buffer, 0, l);
-				}
-				byte[] getData = bos.toByteArray();
-				File file = new File(dir + File.separator + fileName);
-				FileOutputStream fos = new FileOutputStream(file);
-				fos.write(getData);
-				fos.close();
-				bos.close();
-				is.close();
-				isSuccessed = true;
+			if (!dir.mkdirs()) {
+				throw new NoPermissionException("无法创建文件夹：" + dir.getAbsolutePath());
 			}
 		}
-		return isSuccessed;
+		// 下载
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setConnectTimeout(8000);
+		conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+		InputStream is = conn.getInputStream();
+
+		File file = new File(dir + SEP + fileName);
+		FileOutputStream fos = new FileOutputStream(file);
+
+		byte[] buffer = new byte[1024];
+		int l;
+		while ((l = is.read(buffer)) != -1) {
+			fos.write(buffer, 0, l);
+		}
+		fos.close();
+		is.close();
 	}
 
 	/**
@@ -219,6 +214,38 @@ public final class Network {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	/**
+	 * 获取远程文件大小
+	 *
+	 * @param url   地址
+	 * @return 字节大小
+	 */
+	public static Long getLength(String url) throws Exception {
+		return getLength(url, false);
+	}
+
+	/**
+	 * 获取远程文件大小
+	 *
+	 * @param url   地址
+	 * @param isSSL 是否 SSL 请求
+	 * @return 字节大小
+	 */
+	public static Long getLength(String url, boolean isSSL) throws Exception {
+		URL uri = new URL(url);
+		HttpURLConnection connect = (HttpURLConnection) uri.openConnection();
+		if (isSSL) {
+			SSLContext sslcontext = SSLContext.getInstance("TLS");
+			sslcontext.init(null, new TrustManager[] {X509}, null);
+			if (connect instanceof HttpsURLConnection) {
+				((HttpsURLConnection) connect).setSSLSocketFactory(sslcontext.getSocketFactory());
+			}
+		}
+		connect.setRequestMethod("GET");
+		setRequestHeader(connect);
+		return connect.getContentLengthLong();
 	}
 
 	/**
