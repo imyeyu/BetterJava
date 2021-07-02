@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -128,15 +129,12 @@ public final class Tools {
 	}
 
 	/**
-	 * 获取系统内存大小（MB）
+	 * 获取系统内存大小（单位：字节）
 	 *
 	 * @return 系统内存大小
 	 */
-	public static int getSystemMemorySize() {
-		OperatingSystemMXBean osmium = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-		long size = osmium.getTotalMemorySize();
-		size = size / 1024 / 1024;
-		return (int) size;
+	public static Long getSystemMemorySize() {
+		return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalMemorySize();
 	}
 
 	/**
@@ -176,7 +174,7 @@ public final class Tools {
 	/**
 	 * 获取剪切版的字符串（粘贴）
 	 *
-	 * @return 剪切板字符串，如果不是剪切板没有字符串将返回空的字符串
+	 * @return 剪切板字符串，如果剪切板没有字符串将返回空的字符串
 	 */
 	public static String getIntoClipboard() {
 		try {
@@ -186,30 +184,37 @@ public final class Tools {
 		}
 	}
 
+
 	/**
 	 * <br>格式化一个储存容量
-	 * <br>支持 B, KB, MB, GB, TB
-	 * <br>示例：
-	 * <pre>
-	 *     Tools.byteFormat(102411, 2); // 返回 100.01 KB
-	 * </pre>
+	 * @see Tools#byteFormat(double, int, String)
 	 *
-	 * @param size    字节大小
-	 * @param decimal 保留小数
+	 * @param size     字节大小
+	 * @param decimal  保留小数
 	 * @return 格式化结果
 	 */
 	public static String byteFormat(double size, int decimal) {
-		final String[] unit = {" B", " KB", " MB", " GB", " TB"};
+		return byteFormat(size, decimal, null);
+	}
+
+	/**
+	 * <p>格式化一个储存容量，支持 B, KB, MB, GB, TB。
+	 * <p>最高等级：从最小单位开始，格式化到某单位后不再升级，可选 ["B", "KB", "MB", "GB", "TB"]
+	 * <p>示例：Tools.byteFormat(102411, 2); // 返回 100.01 KB
+	 *
+	 * @param size     字节大小
+	 * @param decimal  保留小数
+	 * @param stopUnit 最高等级
+	 * @return 格式化结果
+	 */
+	public static String byteFormat(double size, int decimal, String stopUnit) {
+		final String[] unit = {"B", "KB", "MB", "GB", "TB"};
 		if (0 < size) {
 			String format;
 			for (int i = 0; i < unit.length; i++, size /= 1024d) {
-				format = String.format("%." + decimal + "f" + unit[i], size);
-				if (size <= 1000) {
+				format = String.format("%." + decimal + "f " + unit[i], size);
+				if (unit[i].equals(stopUnit) || size <= 1000 || i == unit.length - 1) {
 					return format;
-				} else {
-					if (i == unit.length - 1) {
-						return format;
-					}
 				}
 			}
 		}
