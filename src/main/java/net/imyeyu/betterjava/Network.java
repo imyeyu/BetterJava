@@ -35,15 +35,14 @@ public final class Network implements BetterJava {
 	 * 发送 GET 请求
 	 *
 	 * @param url   请求链接
-	 * @param isSSL 为 true 时使用 HTTPS 请求
 	 * @return 返回结果
 	 * @throws Exception 请求异常
 	 */
-	public static String doGet(String url, boolean isSSL) throws Exception {
+	public static String doGet(String url) throws Exception {
 		URL uri = new URL(url);
 
 		HttpURLConnection connect = (HttpURLConnection) uri.openConnection();
-		if (isSSL) {
+		if (url.trim().startsWith("https")) {
 			SSLContext sslcontext = SSLContext.getInstance("TLS");
 			sslcontext.init(null, new TrustManager[] {X509}, null);
 			if (connect instanceof HttpsURLConnection) {
@@ -64,14 +63,8 @@ public final class Network implements BetterJava {
 
 		return sb.toString();
 	}
-	public static String doGet(String url) throws Exception {
-		return doGet(url, false);
-	}
-	public static String doGet(String url, Map<String, String> params, boolean isSSL) throws Exception {
-		return doGet(Encode.enURL(url, params), isSSL);
-	}
 	public static String doGet(String url, Map<String, String> params) throws Exception {
-		return doGet(Encode.enURL(url, params), false);
+		return doGet(Encode.enURL(url, params));
 	}
 
 	private static final TrustManager X509 = new X509TrustManager() {
