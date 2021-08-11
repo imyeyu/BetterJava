@@ -65,7 +65,11 @@ public class Configer {
 				sb.append(c[i]).append("\r\n");
 			}
 		}
-		IO.toFile(iniFile, sb.toString());
+		try {
+			IO.toFile(iniFile, sb.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
