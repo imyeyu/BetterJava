@@ -1,6 +1,7 @@
 package net.imyeyu.betterjava;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * BetterJava，由 YeyuUtils -> iUtils -> iTools -> BetterJava 迭代
@@ -10,7 +11,7 @@ import java.io.File;
 public interface BetterJava {
 
 	/** BetterJava 版本 */
-	String VERSION = "1.1.6";
+	String VERSION = "1.1.7";
 
 	/** 文件系统路径分隔符 File.separator */
 	String SEP = File.separator;
@@ -34,6 +35,17 @@ public interface BetterJava {
 	 */
 	default String zero(int l, Number number) {
 		return String.format("%0" + l + "d", number);
+	}
+
+	/**
+	 * 正则表达式测试
+	 *
+	 * @param reg   正则
+	 * @param value 文本
+	 * @return true 为匹配
+	 */
+	default boolean testReg(String reg, String value) {
+		return Pattern.compile(reg).matcher(value).matches();
 	}
 
 	/**
