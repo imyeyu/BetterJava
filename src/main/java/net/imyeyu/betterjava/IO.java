@@ -1,8 +1,7 @@
 package net.imyeyu.betterjava;
 
-import javax.naming.NoPermissionException;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -41,29 +39,40 @@ public final class IO {
 	 *
 	 * @param file 文件
 	 * @param data 字符串内容
-	 * @return 为 true 时写入成功
 	 */
-	public static boolean toFile(File file, String data) {
-		boolean isSuccessed = false;
-		try {
-			if (!file.exists()) {
-				if (!file.createNewFile()) {
-					throw new NoPermissionException("无法创建文件：" + file.getAbsolutePath() + File.separator + file.getName());
-				}
-			}
-			FileOutputStream fos = new FileOutputStream(file);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-			BufferedWriter bw = new BufferedWriter(osw);
-			bw.write(data);
-			bw.flush();
-			bw.close();
-			osw.close();
-			fos.close();
-			isSuccessed = true;
-		} catch (Exception e) {
-			e.printStackTrace();
+	public static void toFile(File file, String data) throws IOException {
+		toFile(file, new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+	}
+
+
+
+	/**
+	 * 写入数据流到文件
+	 *
+	 * @param absFile 文件绝对路径
+	 * @param is      数据流
+	 * @throws IOException 异常
+	 */
+	public static void toFile(String absFile, InputStream is) throws IOException {
+		toFile(new File(absFile), is);
+	}
+
+	/**
+	 * 写入数据流到文件
+	 *
+	 * @param file 文件
+	 * @param is   数据流
+	 * @throws IOException 异常
+	 */
+	public static void toFile(File file, InputStream is) throws IOException {
+		FileOutputStream fos = new FileOutputStream(file);
+		byte[] input = new byte[4096];
+		int l;
+		while ((l = is.read(input)) != -1) {
+			fos.write(input, 0, l);
 		}
-		return isSuccessed;
+		fos.close();
+		is.close();
 	}
 
 
@@ -168,15 +177,7 @@ public final class IO {
 	 * @throws IOException 执行异常
 	 */
 	public static void jarFileToDisk(String jarPath, String filePath) throws IOException {
-		InputStream is = jarFileToInputStream(jarPath);
-		FileOutputStream fos = new FileOutputStream(filePath);
-		byte[] input = new byte[4096];
-		int l;
-		while ((l = is.read(input)) != -1) {
-			fos.write(input, 0, l);
-		}
-		fos.close();
-		is.close();
+		toFile(filePath, jarFileToInputStream(jarPath));
 	}
 
 	/**
