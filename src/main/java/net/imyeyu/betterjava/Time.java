@@ -3,8 +3,6 @@ package net.imyeyu.betterjava;
 import net.imyeyu.betterjava.bean.DateTimeDifference;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Year;
 import java.util.Date;
 
 /**
@@ -35,9 +33,15 @@ public class Time {
 	/** yyyy-MM-dd HH:mm:ss */
 	public static final SimpleDateFormat dateTimeFormat  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	private static int f(double v) {
-		return (int) Math.floor(v);
-	}
+	/** 1 秒时间戳 */
+	public static final long S = 1000;
+	/** 1 分钟时间戳 */
+	public static final long M = S * 60;
+	/** 1 小时时间戳 */
+	public static final long H = M * 60;
+	/** 1 天时间戳 */
+	public static final long D = H * 24;
+
 
 	/**
 	 * 计算当前时间和指定时间差（年-日-时-分-秒-毫秒）
@@ -60,16 +64,28 @@ public class Time {
 		if (endUnixTime < beginUnixTime) {
 			throw new IllegalArgumentException("结束时间不应早于开始时间：" + endUnixTime + " < " + beginUnixTime);
 		}
-		final double cs = 1E3, cm = 6E4, ch = 36E5, cd = 864E5, cy = 31536E6;
+		final double cy = 31536E6;
 
-		final long l = endUnixTime - beginUnixTime;
-		final int y  = f(l / cy),
-				  d  = f((l / cd) - y * 365),
-				  h  = f((l - (y * 365 + d) * cd) / ch),
-				  m  = f((l - (y * 365 + d) * cd - h * ch) / cm),
-				  s  = f((l - (y * 365 + d) * cd - h * ch - m * cm) / cs),
-				  ms = f(((l - (y * 365 + d) * cd - h * ch - m * cm) / cs - s) * cs);
+		final double l  = endUnixTime - beginUnixTime;
+		final int    y  = BetterJava.floor(l / cy),
+				     d  = BetterJava.floor((l / D) - y * 365),
+				     h  = BetterJava.floor((l - (y * 365 + d) * D) / H),
+				     m  = BetterJava.floor((l - (y * 365 + d) * D - h * H) / M),
+				     s  = BetterJava.floor((l - (y * 365 + d) * D - h * H - m * M) / S),
+				     ms = BetterJava.floor(((l - (y * 365 + d) * D - h * H - m * M) / S - s) * S);
 		return new DateTimeDifference(y, d, h, m, s, ms);
+	}
+
+	/** @return 今天零时时间戳 */
+	public static long today() {
+		long now = System.currentTimeMillis();
+		final long eightHour = H * 8;
+		return ((now + eightHour - (now + now) % (now * 24)) - eightHour);
+	}
+
+	/** @return 明天零时时间戳 */
+	public static long tomorrow() {
+		return today() + D;
 	}
 
 	/**
@@ -100,16 +116,5 @@ public class Time {
 	 */
 	public static String toDateTime(long unixTime) {
 		return dateTimeFormat.format(new Date(unixTime));
-	}
-
-	/**
-	 * 获取某月的最后一日
-	 *
-	 * @param y 年
-	 * @param m 月
-	 * @return 最后一日
-	 */
-	public static int getLastDayOfMonth(int y, int m) {
-		return LocalDate.of(y, m, 1).getMonth().length(Year.of(y).isLeap());
 	}
 }
