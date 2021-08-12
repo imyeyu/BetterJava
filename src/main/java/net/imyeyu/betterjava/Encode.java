@@ -5,7 +5,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,7 +129,7 @@ public final class Encode {
 	 *
 	 * @return 计算结果
 	 */
-	public static String md5(byte[] data) throws NoSuchAlgorithmException {
+	public static String md5(byte[] data) throws Exception {
 		if (data == null || data.length == 0) {
 			return null;
 		}
@@ -154,7 +153,7 @@ public final class Encode {
 	 *
 	 * @return 计算结果
 	 */
-	public static String md5(String data) throws NoSuchAlgorithmException {
+	public static String md5(String data) throws Exception {
 		return md5(data.getBytes());
 	}
 
