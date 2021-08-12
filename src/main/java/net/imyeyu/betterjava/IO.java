@@ -87,6 +87,35 @@ public final class IO {
 	}
 
 	/**
+	 * 读取文件为字符串（UTF-8）
+	 *
+	 * @param file 文件
+	 * @return 文件内容
+	 */
+	public static String toString(File file) {
+		return toString(file, "UTF-8");
+	}
+
+	/**
+	 * 读取文件为字符串
+	 *
+	 * @param file    文件
+	 * @param charset 编码类型
+	 * @return 文件内容
+	 */
+	public static String toString(File file, String charset) {
+		String result = "";
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			result = toString(fis);
+			fis.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	/**
 	 * 读取数据流为字符串
 	 *
 	 * @param is      输入流
@@ -116,32 +145,14 @@ public final class IO {
 	}
 
 	/**
-	 * 读取文件为字符串
+	 * 读取文件为数据流
 	 *
-	 * @param file    文件
-	 * @param charset 编码类型
-	 * @return 文件内容
+	 * @param absFile 文件绝对路径
+	 * @return 数据流
+	 * @throws FileNotFoundException 找不到文件
 	 */
-	public static String toString(File file, String charset) {
-		String result = "";
-		try {
-			FileInputStream fis = new FileInputStream(file);
-			result = toString(fis);
-			fis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	/**
-	 * 读取文件为字符串（UTF-8）
-	 *
-	 * @param file 文件
-	 * @return 文件内容
-	 */
-	public static String toString(File file) {
-		return toString(file, "UTF-8");
+	public static InputStream toInputStream(String absFile) throws FileNotFoundException {
+		return new FileInputStream(absFile);
 	}
 
 	/**
