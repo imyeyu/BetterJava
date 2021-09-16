@@ -61,6 +61,9 @@ public class Time {
 	 * @return 计算结果
 	 */
 	public static DateTimeDifference calcDifference(Long beginUnixTime, Long endUnixTime) {
+		if (endUnixTime == null) {
+			endUnixTime = System.currentTimeMillis();
+		}
 		if (endUnixTime < beginUnixTime) {
 			throw new IllegalArgumentException("结束时间不应早于开始时间：" + endUnixTime + " < " + beginUnixTime);
 		}
@@ -79,8 +82,8 @@ public class Time {
 	/** @return 今天零时时间戳 */
 	public static long today() {
 		long now = System.currentTimeMillis();
-		final long eightHour = H * 8;
-		return ((now + eightHour - (now + now) % (now * 24)) - eightHour);
+		final long H8 = H * 8;
+		return ((now + H8 - (now + H8) % (H * 24)) - H8);
 	}
 
 	/** @return 明天零时时间戳 */
