@@ -20,6 +20,5 @@ public class TestBetterJava {
 
 	@Test
 	public void lastDay() {
-		System.out.println(Time.getLastDayOfMonth(2020, 2));
 	}
 }
